@@ -12,21 +12,21 @@ class App extends React.Component {
           price: 999,
           qty: 1,
           title:'Phone',
-          img: '',
+          img: 'https://cdn-icons-png.flaticon.com/512/173/173055.png',
           id: 1
         },
         {
           price: 99,
           qty: 2,
           title:'Watch',
-          img: '',
+          img: 'https://cdn-icons-png.flaticon.com/512/7347/7347843.png',
           id: 2
         },
         {
           price: 9999,
           qty: 10,
           title:'Laptop',
-          img: '', 
+          img: 'https://cdn-icons-png.flaticon.com/512/6062/6062646.png', 
           id: 3
         }
       ]
@@ -76,6 +76,15 @@ class App extends React.Component {
     return count;
   }
 
+  getCartTotal = () => {
+    const{products} = this.state;
+    let total = 0;
+    products.forEach((product) => {
+      total += product.qty*product.price;
+    })
+    return total;
+  }
+
 
 
   render(){
@@ -89,6 +98,7 @@ class App extends React.Component {
           onDecreaseQuantity = {this.handleDecreaseQuantity}
           onDeleteQuantity = {this.handleDeleteQuantity}
         />
+        <div style={{fontSize:20, marginLeft:30}}>TOTAL : {this.getCartTotal()}</div>
       </div>
     );
   }
