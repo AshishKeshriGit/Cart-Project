@@ -1,37 +1,68 @@
 import React from 'react';
 import  Cart from './Cart';
 import Navbar from './Navbar';
+import { firestore } from "./firebase";
 
+// import firebase from 'firebase/compat/app';
+// firebase.initializeApp(config);
 class App extends React.Component {
 
   constructor(){
     super();
     this.state = {
-      products: [
-        {
-          price: 999,
-          qty: 1,
-          title:'Phone',
-          img: 'https://cdn-icons-png.flaticon.com/512/173/173055.png',
-          id: 1
-        },
-        {
-          price: 99,
-          qty: 2,
-          title:'Watch',
-          img: 'https://cdn-icons-png.flaticon.com/512/7347/7347843.png',
-          id: 2
-        },
-        {
-          price: 9999,
-          qty: 10,
-          title:'Laptop',
-          img: 'https://cdn-icons-png.flaticon.com/512/6062/6062646.png', 
-          id: 3
-        }
-      ]
+      //because we will fetch the data from firebase
+      products: [],
+      loading: true
     }
     // this.increaseQuantity = this.increaseQuantity.bind(this);
+  }
+
+  componentDidMount(){
+    
+    // firestore()
+    //   .collection('products')
+    //   .get()
+    //   .then((snapshot) => {
+    //     console.log(snapshot);
+
+    //     snapshot.docs.map((doc) => {
+    //       console.log(doc.data());
+    //     })
+
+    //     const products = snapshot.docs.map((doc) => {
+    //       const data = doc.data();
+    //       data['id'] = doc.id;
+
+    //       return data;
+    //     })
+
+    //     this.setState({
+    //       products : products,
+    //       loading: false
+    //     })
+    //   })
+
+    firestore()
+      .collection('products')
+      .onSnapshot((snapshot) => {
+        console.log(snapshot);
+
+        snapshot.docs.forEach((doc) => {
+          console.log(doc.data());
+        })
+
+        const products = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          data['id'] = doc.id;
+
+          return data;
+        })
+
+        this.setState({
+          products : products,
+          loading: false
+        })
+      })
   }
 
   handleIncreaseQuantity = (product) => {
@@ -88,7 +119,7 @@ class App extends React.Component {
 
 
   render(){
-    const{products} = this.state;
+    const{products, loading} = this.state;
     return (
       <div className="App">
         <Navbar count={this.getCartCount()} />
@@ -98,6 +129,7 @@ class App extends React.Component {
           onDecreaseQuantity = {this.handleDecreaseQuantity}
           onDeleteQuantity = {this.handleDeleteQuantity}
         />
+        {loading && <h1>Products Loading ...</h1>}
         <div style={{fontSize:20, marginLeft:30}}>TOTAL : {this.getCartTotal()}</div>
       </div>
     );
